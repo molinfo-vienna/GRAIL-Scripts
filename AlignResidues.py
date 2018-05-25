@@ -31,41 +31,37 @@ import CDPL.Math as Math
 
 
 def process():
-    if len(sys.argv) < 4:
-        print >> sys.stderr, 'Usage:', sys.argv[0], '[threshold] [input CDF-file] [output CDF-file] [[residue subset]]'
+    if len(sys.argv) < 3:
+        print >> sys.stderr, 'Usage:', sys.argv[0], '[input CDF-file] [output CDF-file] [[residue subset]]'
         sys.exit(2)
 
-    print '- Processing CDF-file:', sys.argv[2], '...'
+    print '- Processing CDF-file:', sys.argv[1], '...'
 
-    threshold = float(sys.argv[1])
-    mol = Util.loadCDFMolecule(sys.argv[2])
+    mol = Util.loadCDFMolecule(sys.argv[1])
 
     if not mol:
         print '!! Could not read file'
         sys.exit(2)
 
-    #old_seq_nos, old_to_new_seq_no_map = Util.fixResidueSeqNumbers(mol)
     residues = Biomol.ResidueList(mol)
 
     print '- Num. residues:', residues.getSize()
 
-    if len(sys.argv) > 4:
-        res_subset = Util.toIntegerList(Util.readLines(sys.argv[4]))
+    if len(sys.argv) > 3:
+        res_subset_ids = Util.toIntegerList(Util.readLines(sys.argv[3]))
 
-        print '- Residue subset:', res_subset
+        print '- Residue subset:', res_subset_ids
 
-        #for i in range(len(res_subset)):
-        #    res_subset[i] = old_to_new_seq_no_map[res_subset[i]]
+        Util.filterResidues(residues, res_subset_ids)
 
-        Util.filterResidues(residues, res_subset)
+    print '- num residues', len(residues)
 
     num_confs = Chem.getNumConformations(mol)
 
     print '- Num. frames:', num_confs
-    print '- Calculating residue mobilities...'
+    print '- Aligning frames...'
 
-    saved_mean_positions = []
-    saved_res_positions = []
+    res_positions = []
 
     for res in residues:
         atoms = Util.getBackboneAtoms(res)
@@ -76,42 +72,29 @@ def process():
             positions.append(Util.calcAtomSetCentroid(atoms, i))
             i += 1
         
-        mean_pos = Util.calcMeanPos(positions)
-        fluct = Util.calcMaxFluct(positions, mean_pos)
-
-        if fluct <= threshold:
-            saved_mean_positions.append(mean_pos)
-            saved_res_positions.append(positions)
-
-            print 'Using residue: ' + Util.getResidueID(res) + ', fluct: ' + str(fluct)
-
-    if len(saved_mean_positions) < 3:
-        print '!! Not enough reference positions for alignment'
-        sys.exit(2)     
+        res_positions.append(positions)
 
     alignment = Math.DKabschAlgorithm()
-    al_ref_positions = Math.DMatrix(3, len(saved_mean_positions))
-    al_positions = Math.DMatrix(3, len(saved_mean_positions))
+    al_ref_positions = Math.DMatrix(3, residues.getSize())
+    al_positions = Math.DMatrix(3, residues.getSize())
     i = 0
-
-    print '- Aligning frames...'
-   
-    while i < len(saved_mean_positions):
-        pos = saved_mean_positions[i]
+  
+    while i < residues.getSize():
+        pos = res_positions[i][0]
 
         al_ref_positions.setElement(0, i, pos[0])
         al_ref_positions.setElement(1, i, pos[1])
         al_ref_positions.setElement(2, i, pos[2])
         i += 1
 
-    i = 0
+    i = 1
     xform = Math.Matrix4D()
 
     while i < num_confs:
         j = 0
 
-        while j < len(saved_mean_positions):
-            pos = saved_res_positions[j][i]
+        while j < residues.getSize():
+            pos = res_positions[j][i]
 
             al_positions.setElement(0, j, pos[0])
             al_positions.setElement(1, j, pos[1])
@@ -122,16 +105,13 @@ def process():
             print '!! Could not align frame', i
 
         else:
-            #print 'Aligning frame', i
             xform.assign(alignment.getTransform())
             Chem.transformConformation(mol, i, xform)
 
         i += 1
 
-    #Util.setResidueSeqNumbers(mol, old_seq_nos)
-
-    if not Util.saveCDFMolecule(sys.argv[3], mol):
-        print '!! Could not write file'
+    if not Util.saveCDFMolecule(sys.argv[2], mol):
+        print '!! Could not write output file'
         sys.exit(2)
 
 

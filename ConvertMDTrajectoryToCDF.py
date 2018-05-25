@@ -162,7 +162,7 @@ def process():
     print >> sys.stderr, '- Writing output file:'
 
     if not Chem.FileCDFMolecularGraphWriter(sys.argv[3]).write(cdf_mol):
-        print >> sys.stderr, '!! Could not write file'
+        print >> sys.stderr, '!! Could not write output file'
         sys.exit(2)
 
 

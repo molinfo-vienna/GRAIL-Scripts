@@ -168,7 +168,6 @@ def process():
 
     env_pharm = Pharm.BasicPharmacophore()
     pharm_gen = Pharm.DefaultPharmacophoreGenerator(True)
-
     #pharm_gen.setFeatureGenerator(Pharm.FeatureType.HYDROPHOBIC, Pharm.HydrophobicAtomFeatureGenerator()) # Atom-based hydrophobics!
 
     grid_ctr = 0.5 * (bbox_min + bbox_max)
@@ -288,17 +287,6 @@ def process():
             print >> sys.stderr, ' - Calculating ligand grid for', ligand.getNumAtoms(), 'atoms ...'
 
             density_calc.calculate(ligand, grid)
-
-#        bur_grid = Grid.DRegularGrid(GRID_STEP_SIZE);
-#        bur_grid.resize(num_x_grid_pts, num_y_grid_pts, num_z_grid_pts, False)
-#        bur_grid.setCoordinatesTransform(grid_xform)
-#        Grid.setName(bur_grid, 'BUR')
-#        grid_set.addElement(bur_grid)
-
-#        print >> sys.stderr, ' - Calculating buriedness grid ...'
-
-#        buriedness_calc.setAtom3DCoordinatesFunction(coords_func)
-#        buriedness_calc.calculate(bsite_env, bur_grid)
 
         if not grid_set_writer.write(grid_set):
             print >> sys.stderr, '!! Could not write to output file'

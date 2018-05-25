@@ -179,7 +179,6 @@ def fixResidueSeqNumbers(mol):
 
         curr_seq_no += 1
         
-    #print curr_seq_no, 'Residues found!'
     return old_res_seq_nos, old_to_new_seq_no_map
 
 def setResidueSeqNumbers(mol, seq_nos):
