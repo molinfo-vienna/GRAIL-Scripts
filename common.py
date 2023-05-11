@@ -61,7 +61,8 @@ def cdfMol_pdb(pdb, output, name, write_res=True):
         sys.exit('!!! Could not load PDB file: ' + pdb)
             
     Pharm.prepareForPharmacophoreGeneration(pdb_mol)
-
+    Biomol.setHydrogenResidueSequenceInfo(pdb_mol, False)
+ 
     for atom in pdb_mol.atoms:
         array = Math.Vector3DArray()
         array.addElement(Chem.get3DCoordinates(atom))
