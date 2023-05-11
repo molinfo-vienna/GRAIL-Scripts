@@ -1,6 +1,6 @@
 """
-@author: Arthur Garon
-Department of Pharmaceutical Chemistry
+@author: Arthur Garon, Thomas Seidel
+Department of Pharmaceutical Sciences
 University of Vienna
 """
 

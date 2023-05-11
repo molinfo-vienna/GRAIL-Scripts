@@ -1,7 +1,7 @@
 """
-@author: Arthur Garon
-department of pharmaceutical chemistry
-university of vienna
+@author: Arthur Garon, Thomas Seidel
+Department of Pharmaceutical Sciences
+University of Vienna
 """
 
 import math
@@ -11,21 +11,15 @@ import os
 
 import MDAnalysis
 import argparse
-import numpy as np
+import numpy
 
-import scipy.interpolate as si
-import scipy.stats
+import scipy.interpolate
 import warnings
 from collections import defaultdict
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from multiprocessing.dummy import Pool as ThreadPool
+from multiprocessing.dummy import Pool
 
-import CDPL.Base as Base
-import CDPL.Biomol as Biomol
-import CDPL.Chem as Chem
-import CDPL.Grid as Grid
-import CDPL.Math as Math
-import CDPL.Pharm as Pharm
+import CDPL
 
 import pyevtk.hl as hl
 

@@ -1,7 +1,7 @@
 """
-@author: Arthur Garon
-department of pharmaceutical chemistry
-university of vienna
+@author: Arthur Garon, Thomas Seidel
+Department of Pharmaceutical Sciences
+University of Vienna
 """
 
 import argparse
