@@ -64,9 +64,9 @@ def cdfMol(psf, dcd, output, name, chunk_size=500):
     for i in range(len(u.trajectory)):
         if i % chunk_size == 0 and i != 0 and i != (len(u.trajectory) - 1):
             chunks_end.append(i)
-            chunks_start.append(i + 1)
+            chunks_start.append(i)
         elif i == (len(u.trajectory) - 1):
-            chunks_end.append(i)
+            chunks_end.append(i + 1)
 
     cdf_mol = Chem.BasicMolecule()
     waters = {}
